@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { Lead, LeadStatus, STATUS_OPTIONS } from '../types/lead';
+import { Lead, LeadStatus } from '../types/lead';
 import { StatusDropdown } from './StatusDropdown';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Phone, Clock, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Phone, Sparkles, CalendarCheck } from 'lucide-react';
+import { createGoogleCalendarUrl } from '../utils/calendar';
 
 interface CalendarViewProps {
   leads: Lead[];
   onUpdateStatus: (id: string, status: LeadStatus) => void;
-  onUpdateNotes: (id: string, notes: string) => void;
+  onUpdateNotes?: (id: string, notes: string) => void;
+  onOpenWhatsAppAi?: (lead: Lead) => void;
+  onOpenGoogleCalendar?: (lead: Lead) => void;
 }
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
   leads,
   onUpdateStatus,
-  onUpdateNotes
+  onOpenWhatsAppAi,
+  onOpenGoogleCalendar
 }) => {
   // Center around October 2026 (matching data date 16.10.2026) or current system date
   const [currentYear, setCurrentYear] = useState<number>(2026);
@@ -236,13 +240,39 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       onSelect={(st) => onUpdateStatus(lead.id, st)}
                       compact
                     />
-                    <a
-                      href={`tel:${lead.phone.replace(/\s+/g, '')}`}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-200"
-                    >
-                      <Phone className="w-3 h-3 text-emerald-400" />
-                      <span>{lead.phone}</span>
-                    </a>
+                    <div className="flex items-center gap-1.5">
+                      {onOpenWhatsAppAi && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenWhatsAppAi(lead)}
+                          className="p-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400"
+                          title="Groq AI İle Mesaj Oluştur"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (onOpenGoogleCalendar) {
+                            onOpenGoogleCalendar(lead);
+                          } else {
+                            window.open(createGoogleCalendarUrl(lead), '_blank');
+                          }
+                        }}
+                        className="p-1 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400"
+                        title="Google Calendar'da Aç & Ekle"
+                      >
+                        <CalendarCheck className="w-3.5 h-3.5" />
+                      </button>
+                      <a
+                        href={`tel:${lead.phone.replace(/\s+/g, '')}`}
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-200"
+                      >
+                        <Phone className="w-3 h-3 text-slate-400" />
+                        <span>{lead.phone}</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))

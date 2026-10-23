@@ -13,8 +13,11 @@ import {
   ChevronDown,
   Info,
   StickyNote,
-  Maximize2
+  Maximize2,
+  Sparkles,
+  CalendarCheck
 } from 'lucide-react';
+import { createGoogleCalendarUrl } from '../utils/calendar';
 
 interface TableViewProps {
   leads: Lead[];
@@ -23,6 +26,8 @@ interface TableViewProps {
   onUpdateFollowUpDate: (id: string, date: string) => void;
   onEditLead: (lead: Lead) => void;
   onDeleteLead: (id: string) => void;
+  onOpenWhatsAppAi: (lead: Lead) => void;
+  onOpenGoogleCalendar: (lead: Lead) => void;
 }
 
 type SortField = 'name' | 'opportunityScore' | 'addedDate' | 'status' | 'category';
@@ -33,7 +38,9 @@ export const TableView: React.FC<TableViewProps> = ({
   onUpdateNotes,
   onUpdateFollowUpDate,
   onEditLead,
-  onDeleteLead
+  onDeleteLead,
+  onOpenWhatsAppAi,
+  onOpenGoogleCalendar
 }) => {
   const [sortField, setSortField] = useState<SortField>('opportunityScore');
   const [sortAsc, setSortAsc] = useState<boolean>(false);
@@ -101,7 +108,7 @@ export const TableView: React.FC<TableViewProps> = ({
             <Info className="w-4 h-4 text-indigo-400" />
             <span>
               Toplam <strong className="text-white">{leads.length}</strong> işletme listeleniyor. 
-              <strong>Notlar</strong> sütunundaki metin kutusuna doğrudan yazabilir veya büyüteç simgesine tıklayarak hazır şablonlu detaylı not penceresini açabilirsiniz.
+              Her satırdaki <span className="text-emerald-400 font-bold">✨ Groq AI</span> butonuyla işletmeye özel WhatsApp mesajı üretebilir, <span className="text-blue-400 font-bold">📅 Takvim</span> butonuyla tek tıkla Google Calendar'a randevu ekleyebilirsiniz.
             </span>
           </div>
         </div>
@@ -139,7 +146,7 @@ export const TableView: React.FC<TableViewProps> = ({
                   </div>
                 </th>
                 <th className="py-3 px-4">Şehir</th>
-                <th className="py-3 px-4">İletişim</th>
+                <th className="py-3 px-4">İletişim & AI</th>
                 <th 
                   className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none text-center"
                   onClick={() => handleSort('opportunityScore')}
@@ -158,21 +165,24 @@ export const TableView: React.FC<TableViewProps> = ({
                 <th className="py-3 px-4 bg-indigo-950/30 border-l border-indigo-900/30 text-indigo-300">
                   <div className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-                    <span>İletişim Durumu (Dropdown)</span>
+                    <span>İletişim Durumu</span>
                   </div>
                 </th>
 
-                {/* SÜTUN 2: NOTLAR (Belirginleştirilmiş Notlar Bölümü) */}
-                <th className="py-3 px-4 bg-amber-950/20 border-l border-r border-amber-900/30 text-amber-300 min-w-[280px]">
+                {/* SÜTUN 2: NOTLAR */}
+                <th className="py-3 px-4 bg-amber-950/20 border-l border-r border-amber-900/30 text-amber-300 min-w-[260px]">
                   <div className="flex items-center gap-1.5">
                     <StickyNote className="w-3.5 h-3.5 text-amber-400" />
-                    <span>📝 Notlar (Görüşme Notları)</span>
+                    <span>📝 Notlar</span>
                   </div>
                 </th>
 
-                {/* SÜTUN 3: Takip / Randevu */}
-                <th className="py-3 px-4 bg-indigo-950/30 border-r border-indigo-900/30 text-indigo-300 min-w-[150px]">
-                  <span>Takip / Randevu</span>
+                {/* SÜTUN 3: Takip & Google Calendar */}
+                <th className="py-3 px-4 bg-blue-950/20 border-r border-blue-900/30 text-blue-300 min-w-[170px]">
+                  <div className="flex items-center gap-1">
+                    <CalendarCheck className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Takip & Google Cal</span>
+                  </div>
                 </th>
 
                 <th className="py-3 px-4 text-right">İşlemler</th>
@@ -201,7 +211,7 @@ export const TableView: React.FC<TableViewProps> = ({
                       </td>
 
                       {/* Name */}
-                      <td className="py-3 px-4 font-medium text-slate-100 max-w-[240px]">
+                      <td className="py-3 px-4 font-medium text-slate-100 max-w-[230px]">
                         <div className="flex flex-col">
                           <span className="truncate font-semibold text-[13px] group-hover:text-indigo-300 transition-colors" title={lead.name}>
                             {lead.name}
@@ -224,7 +234,7 @@ export const TableView: React.FC<TableViewProps> = ({
                         {lead.city}
                       </td>
 
-                      {/* Phone & quick contact */}
+                      {/* Phone & Groq AI WhatsApp trigger */}
                       <td className="py-3 px-4 whitespace-nowrap">
                         {hasValidPhone ? (
                           <div className="flex items-center gap-2">
@@ -236,17 +246,17 @@ export const TableView: React.FC<TableViewProps> = ({
                               <Phone className="w-3 h-3 text-slate-500" />
                               <span>{lead.phone}</span>
                             </a>
-                            <a
-                              href={`https://wa.me/${formatCleanPhone(lead.phone)}?text=${encodeURIComponent(
-                                `Merhaba ${lead.name}, web sitesi ve dijital çözümlerimiz hakkında iletişime geçmek istemiştik.`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-1 rounded-md text-emerald-400 hover:bg-emerald-500/20 transition-colors"
-                              title="WhatsApp Mesajı Gönder"
+
+                            {/* Groq AI WhatsApp generator button */}
+                            <button
+                              type="button"
+                              onClick={() => onOpenWhatsAppAi(lead)}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold transition-all shadow-sm"
+                              title="Groq AI İle Özel WhatsApp Mesajı Oluştur"
                             >
-                              <MessageCircle className="w-3.5 h-3.5" />
-                            </a>
+                              <Sparkles className="w-3 h-3 text-emerald-400" />
+                              <span>AI Mesaj</span>
+                            </button>
                           </div>
                         ) : (
                           <span className="text-slate-600 italic">Telefon Yok</span>
@@ -270,12 +280,12 @@ export const TableView: React.FC<TableViewProps> = ({
                         />
                       </td>
 
-                      {/* SÜTUN 2: NOTLAR (Belirgin, Zengin Notlar Alanı) */}
+                      {/* SÜTUN 2: NOTLAR (Zengin Not Girişi) */}
                       <td className="py-2 px-4 bg-amber-950/10 border-l border-r border-amber-900/20">
                         <div className="relative flex items-center gap-1.5">
                           <input
                             type="text"
-                            placeholder="Not ekle (örn: Fiyat verildi, arandı)..."
+                            placeholder="Not ekle (örn: Fiyat verildi)..."
                             value={lead.notes || ''}
                             onChange={(e) => onUpdateNotes(lead.id, e.target.value)}
                             className={`w-full pl-2.5 pr-8 py-1.5 rounded-lg border text-xs text-slate-100 placeholder-slate-600 focus:outline-none transition-all ${
@@ -292,22 +302,30 @@ export const TableView: React.FC<TableViewProps> = ({
                                 ? 'text-amber-400 hover:bg-amber-500/20'
                                 : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
                             }`}
-                            title="Detaylı Not Penceresini Aç / Hazır Şablon Ekle"
+                            title="Detaylı Not Penceresini Aç"
                           >
                             <Maximize2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
 
-                      {/* SÜTUN 3: Takip / Randevu Tarihi */}
-                      <td className="py-2 px-4 bg-indigo-950/20 border-r border-indigo-900/30 whitespace-nowrap">
+                      {/* SÜTUN 3: Takip Tarihi & Google Calendar */}
+                      <td className="py-2 px-4 bg-blue-950/20 border-r border-blue-900/30 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           <input
                             type="date"
                             value={lead.followUpDate || ''}
                             onChange={(e) => onUpdateFollowUpDate(lead.id, e.target.value)}
-                            className="px-2 py-1 rounded-lg bg-slate-950/60 border border-slate-700/60 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                            className="px-2 py-1 rounded-lg bg-slate-950/60 border border-slate-700/60 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
                           />
+                          <button
+                            type="button"
+                            onClick={() => onOpenGoogleCalendar(lead)}
+                            className="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-colors border border-blue-500/30"
+                            title="Google Calendar'da Aç & Ekle"
+                          >
+                            <CalendarCheck className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </td>
 

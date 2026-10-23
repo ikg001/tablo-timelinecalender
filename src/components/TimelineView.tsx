@@ -1,18 +1,21 @@
 import React from 'react';
-import { Lead, LeadStatus, STATUS_OPTIONS } from '../types/lead';
+import { Lead, LeadStatus } from '../types/lead';
 import { StatusDropdown } from './StatusDropdown';
-import { Calendar, Phone, MessageCircle, Clock, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Calendar, Phone, MessageCircle, Clock, CheckCircle2, Sparkles, CalendarCheck } from 'lucide-react';
+import { createGoogleCalendarUrl } from '../utils/calendar';
 
 interface TimelineViewProps {
   leads: Lead[];
   onUpdateStatus: (id: string, status: LeadStatus) => void;
-  onUpdateNotes: (id: string, notes: string) => void;
+  onOpenWhatsAppAi?: (lead: Lead) => void;
+  onOpenGoogleCalendar?: (lead: Lead) => void;
 }
 
 export const TimelineView: React.FC<TimelineViewProps> = ({
   leads,
   onUpdateStatus,
-  onUpdateNotes
+  onOpenWhatsAppAi,
+  onOpenGoogleCalendar
 }) => {
   // Sort leads: those with follow-up dates first, then by score
   const followUpLeads = leads
@@ -98,21 +101,36 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
                       compact
                     />
                     <div className="flex items-center gap-1.5">
+                      {onOpenWhatsAppAi && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenWhatsAppAi(lead)}
+                          className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs"
+                          title="Groq AI İle Mesaj Üret"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (onOpenGoogleCalendar) {
+                            onOpenGoogleCalendar(lead);
+                          } else {
+                            window.open(createGoogleCalendarUrl(lead), '_blank');
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs"
+                        title="Google Calendar'a Ekle"
+                      >
+                        <CalendarCheck className="w-3.5 h-3.5" />
+                      </button>
                       <a
                         href={`tel:${lead.phone.replace(/\s+/g, '')}`}
                         className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
                         title="Ara"
                       >
                         <Phone className="w-3 h-3" />
-                      </a>
-                      <a
-                        href={`https://wa.me/90${lead.phone.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400"
-                        title="WhatsApp"
-                      >
-                        <MessageCircle className="w-3 h-3" />
                       </a>
                     </div>
                   </div>
@@ -156,13 +174,26 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
                     onSelect={(st) => onUpdateStatus(lead.id, st)}
                     compact
                   />
-                  <a
-                    href={`tel:${lead.phone.replace(/\s+/g, '')}`}
-                    className="flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 font-mono"
-                  >
-                    <Phone className="w-3 h-3" />
-                    <span>Hemen Ara</span>
-                  </a>
+                  <div className="flex items-center gap-2">
+                    {onOpenWhatsAppAi && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenWhatsAppAi(lead)}
+                        className="p-1 rounded-md bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 text-[11px] flex items-center gap-1 font-semibold"
+                        title="Groq AI İle WhatsApp Mesajı"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>AI</span>
+                      </button>
+                    )}
+                    <a
+                      href={`tel:${lead.phone.replace(/\s+/g, '')}`}
+                      className="flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 font-mono"
+                    >
+                      <Phone className="w-3 h-3" />
+                      <span>Ara</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}

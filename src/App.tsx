@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useLeads } from './hooks/useLeads';
-import { Header, ViewMode } from './components/Header';
+import { Header } from './components/Header';
+import type { ViewMode } from './components/Header';
 import { StatsCards } from './components/StatsCards';
 import { TableView } from './components/TableView';
 import { TimelineView } from './components/TimelineView';
@@ -8,7 +9,9 @@ import { CalendarView } from './components/CalendarView';
 import { AnalyticsView } from './components/AnalyticsView';
 import { LeadModal } from './components/LeadModal';
 import { DeployModal } from './components/DeployModal';
-import { Lead } from './types/lead';
+import { WhatsAppAiModal } from './components/WhatsAppAiModal';
+import { GoogleCalendarModal } from './components/GoogleCalendarModal';
+import type { Lead } from './types/lead';
 
 export function App() {
   const {
@@ -28,9 +31,18 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
 
+  // Modals state
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+
+  // WhatsApp AI Modal State
+  const [isWhatsAppAiModalOpen, setIsWhatsAppAiModalOpen] = useState(false);
+  const [activeWhatsAppLead, setActiveWhatsAppLead] = useState<Lead | null>(null);
+
+  // Google Calendar Modal State
+  const [isGoogleCalendarModalOpen, setIsGoogleCalendarModalOpen] = useState(false);
+  const [activeCalendarLead, setActiveCalendarLead] = useState<Lead | null>(null);
 
   // Distinct categories
   const categories = useMemo(() => {
@@ -88,6 +100,23 @@ export function App() {
     }
   };
 
+  const handleOpenWhatsAppAi = (lead?: Lead) => {
+    setActiveWhatsAppLead(lead || filteredLeads[0] || leads[0]);
+    setIsWhatsAppAiModalOpen(true);
+  };
+
+  const handleOpenGoogleCalendar = (lead?: Lead) => {
+    setActiveCalendarLead(lead || filteredLeads[0] || leads[0]);
+    setIsGoogleCalendarModalOpen(true);
+  };
+
+  const handleAppendNotes = (id: string, newNote: string) => {
+    const target = leads.find(l => l.id === id);
+    if (!target) return;
+    const combined = target.notes ? `${target.notes}\n${newNote}` : newNote;
+    updateLeadNotes(id, combined);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-600 selection:text-white">
       {/* Top Navbar */}
@@ -107,6 +136,8 @@ export function App() {
         onExport={exportToCSV}
         onReset={resetToInitial}
         onOpenDeployModal={() => setIsDeployModalOpen(true)}
+        onOpenGoogleCalendarModal={() => handleOpenGoogleCalendar()}
+        onOpenWhatsAppAiModal={() => handleOpenWhatsAppAi()}
       />
 
       {/* Main Content */}
@@ -127,6 +158,8 @@ export function App() {
             onUpdateFollowUpDate={updateLeadFollowUpDate}
             onEditLead={handleEditLead}
             onDeleteLead={deleteLead}
+            onOpenWhatsAppAi={handleOpenWhatsAppAi}
+            onOpenGoogleCalendar={handleOpenGoogleCalendar}
           />
         )}
 
@@ -134,7 +167,8 @@ export function App() {
           <TimelineView
             leads={filteredLeads}
             onUpdateStatus={updateLeadStatus}
-            onUpdateNotes={updateLeadNotes}
+            onOpenWhatsAppAi={handleOpenWhatsAppAi}
+            onOpenGoogleCalendar={handleOpenGoogleCalendar}
           />
         )}
 
@@ -142,7 +176,8 @@ export function App() {
           <CalendarView
             leads={filteredLeads}
             onUpdateStatus={updateLeadStatus}
-            onUpdateNotes={updateLeadNotes}
+            onOpenWhatsAppAi={handleOpenWhatsAppAi}
+            onOpenGoogleCalendar={handleOpenGoogleCalendar}
           />
         )}
 
@@ -164,12 +199,26 @@ export function App() {
         onClose={() => setIsDeployModalOpen(false)}
       />
 
+      <WhatsAppAiModal
+        isOpen={isWhatsAppAiModalOpen}
+        onClose={() => setIsWhatsAppAiModalOpen(false)}
+        lead={activeWhatsAppLead}
+        onAppendNotes={handleAppendNotes}
+      />
+
+      <GoogleCalendarModal
+        isOpen={isGoogleCalendarModalOpen}
+        onClose={() => setIsGoogleCalendarModalOpen(false)}
+        leads={leads}
+        selectedLead={activeCalendarLead}
+      />
+
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950/80 py-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>Malatya İşletme CRM & Web Sitesi Satış Takip Sistemi • 64 İşletme Kayıtlı</span>
           <span className="text-[11px] text-slate-600">
-            Ekstra Sütunlar: İletişim Durumu (Dropdown) + Görüşme Notları + Randevu Takvimi
+            Groq AI Destekli WhatsApp Mesaj Oluşturucu & Google Calendar Entegrasyonu
           </span>
         </div>
       </footer>
