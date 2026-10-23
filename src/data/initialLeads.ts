@@ -1,4 +1,4 @@
-import { Lead } from '../types/lead';
+import type { Lead } from '../types/lead';
 
 export const INITIAL_LEADS: Lead[] = [
   {
@@ -10,9 +10,9 @@ export const INITIAL_LEADS: Lead[] = [
     "originalStatus": "yeni",
     "opportunityScore": 80,
     "addedDate": "16.10.2026",
-    "status": "arandi",
-    "notes": "Yetkili ile görüşüldü, kurumsal web sitesi teklifi istendi.",
-    "followUpDate": "2026-10-24"
+    "status": "aranmadi",
+    "notes": "",
+    "followUpDate": ""
   },
   {
     "id": "lead-2",
@@ -23,9 +23,9 @@ export const INITIAL_LEADS: Lead[] = [
     "originalStatus": "yeni",
     "opportunityScore": 80,
     "addedDate": "16.10.2026",
-    "status": "tekrar_iletisime_gecilecek",
-    "notes": "Klinik yöneticisi toplantıdaydı, yarın saat 14:00'te aranacak.",
-    "followUpDate": "2026-10-24"
+    "status": "aranmadi",
+    "notes": "",
+    "followUpDate": ""
   },
   {
     "id": "lead-3",
@@ -36,9 +36,9 @@ export const INITIAL_LEADS: Lead[] = [
     "originalStatus": "yeni",
     "opportunityScore": 80,
     "addedDate": "16.10.2026",
-    "status": "websitesi_eklendi",
-    "notes": "Yeni web sitesi projesi onaylandı, demo site yayına alındı.",
-    "followUpDate": "2026-10-20"
+    "status": "aranmadi",
+    "notes": "",
+    "followUpDate": ""
   },
   {
     "id": "lead-4",
@@ -49,9 +49,9 @@ export const INITIAL_LEADS: Lead[] = [
     "originalStatus": "yeni",
     "opportunityScore": 80,
     "addedDate": "13.10.2026",
-    "status": "olumlu",
-    "notes": "Paket 2 seçildi. Sözleşme hazırlandı.",
-    "followUpDate": "2026-10-25"
+    "status": "aranmadi",
+    "notes": "",
+    "followUpDate": ""
   },
   {
     "id": "lead-5",
@@ -75,8 +75,8 @@ export const INITIAL_LEADS: Lead[] = [
     "originalStatus": "yeni",
     "opportunityScore": 65,
     "addedDate": "10.10.2026",
-    "status": "red_alindi",
-    "notes": "Merkez şubeden dijital pazarlama yönetiliyor dendi.",
+    "status": "aranmadi",
+    "notes": "",
     "followUpDate": ""
   },
   {

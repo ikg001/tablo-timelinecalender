@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Lead, LeadStatus } from '../types/lead';
+import type { Lead, LeadStatus } from '../types/lead';
 import { INITIAL_LEADS } from '../data/initialLeads';
 
-const STORAGE_KEY = 'malatya_leads_crm_v1';
+const STORAGE_KEY = 'malatya_leads_crm_clean_v2';
 
 export function useLeads() {
   const [leads, setLeads] = useState<Lead[]>(() => {
     try {
+      // Remove obsolete v1 key with mock notes if present
+      localStorage.removeItem('malatya_leads_crm_v1');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         return JSON.parse(saved);

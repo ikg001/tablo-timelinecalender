@@ -21,7 +21,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   // Center around October 2026 (matching data date 16.10.2026) or current system date
   const [currentYear, setCurrentYear] = useState<number>(2026);
   const [currentMonth, setCurrentMonth] = useState<number>(9); // 0-indexed: 9 = October
-  const [selectedDay, setSelectedDay] = useState<number | null>(24);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const monthNames = [
     'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',

@@ -114,8 +114,8 @@ export const WhatsAppAiModal: React.FC<WhatsAppAiModalProps> = ({
         setSelectedTone('kurumsal');
       }
 
-      // Pre-fill web research info automatically
-      setWebResearchNotes(`${lead.name}, ${lead.city} bölgesinde ${lead.category} alanında hizmet sunmaktadır.`);
+      // Empty web research notes by default until user searches or types
+      setWebResearchNotes('');
 
       // Pre-fill initial generated message with template placeholder
       const selectedTpl = match || templates[0];
