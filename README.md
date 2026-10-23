@@ -46,16 +46,7 @@ Malatya'daki **diş klinikleri**, **diyetisyenler** ve **sigorta acenteleri** (t
 
 ---
 
-## 🌐 Dağıtım (GitHub & Vercel)
+## 🌐 Canlı Bağlantılar (Live Demo)
 
-### GitHub Deposu
-- `https://github.com/ikg001/tablo-timelinecalender`
-
-### Vercel ile Canlıya Alma
-1. [Vercel Dashboard](https://vercel.com/dashboard) adresine gidin.
-2. **"Add New"** > **"Project"** seçin.
-3. GitHub hesabınızı bağlayıp `tablo-timelinecalender` deposunu seçin.
-4. **"Deploy"** butonuna basın. Projeniz 1 dakika içinde canlı URL ile yayında olacaktır!
-
-Alternatif tek tıkla kurulum:
-[Vercel One-Click Deploy](https://vercel.com/new/clone?repository-url=https://github.com/ikg001/tablo-timelinecalender)
+- 🔗 **Canlı Web Sitesi (Vercel):** [https://tablo-timelinecalender.vercel.app](https://tablo-timelinecalender.vercel.app)
+- 📦 **GitHub Deposu:** [https://github.com/ikg001/tablo-timelinecalender](https://github.com/ikg001/tablo-timelinecalender)
