@@ -11,6 +11,7 @@ import { LeadModal } from './components/LeadModal';
 import { DeployModal } from './components/DeployModal';
 import { WhatsAppAiModal } from './components/WhatsAppAiModal';
 import { GoogleCalendarModal } from './components/GoogleCalendarModal';
+import { ImportModal } from './components/ImportModal';
 import type { Lead } from './types/lead';
 
 export function App() {
@@ -23,7 +24,8 @@ export function App() {
     addLead,
     deleteLead,
     resetToInitial,
-    exportToCSV
+    exportToCSV,
+    importLeads
   } = useLeads();
 
   const [currentView, setCurrentView] = useState<ViewMode>('table');
@@ -35,6 +37,7 @@ export function App() {
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // WhatsApp AI Modal State
   const [isWhatsAppAiModalOpen, setIsWhatsAppAiModalOpen] = useState(false);
@@ -138,6 +141,7 @@ export function App() {
         onOpenDeployModal={() => setIsDeployModalOpen(true)}
         onOpenGoogleCalendarModal={() => handleOpenGoogleCalendar()}
         onOpenWhatsAppAiModal={() => handleOpenWhatsAppAi()}
+        onOpenImportModal={() => setIsImportModalOpen(true)}
       />
 
       {/* Main Content */}
@@ -211,6 +215,13 @@ export function App() {
         onClose={() => setIsGoogleCalendarModalOpen(false)}
         leads={leads}
         selectedLead={activeCalendarLead}
+      />
+
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={importLeads}
+        currentCount={leads.length}
       />
 
       {/* Footer */}

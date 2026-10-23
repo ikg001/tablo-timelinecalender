@@ -12,7 +12,8 @@ import {
   Globe2,
   ExternalLink,
   Sparkles,
-  CalendarCheck
+  CalendarCheck,
+  FileSpreadsheet
 } from 'lucide-react';
 import type { LeadStatus } from '../types/lead';
 import { STATUS_OPTIONS } from '../types/lead';
@@ -37,6 +38,7 @@ interface HeaderProps {
   onOpenDeployModal: () => void;
   onOpenGoogleCalendarModal: () => void;
   onOpenWhatsAppAiModal: () => void;
+  onOpenImportModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -56,7 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
   onReset,
   onOpenDeployModal,
   onOpenGoogleCalendarModal,
-  onOpenWhatsAppAiModal
+  onOpenWhatsAppAiModal,
+  onOpenImportModal
 }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
@@ -111,6 +114,15 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Globe2 className="w-3.5 h-3.5 text-slate-400" />
               <span className="hidden sm:inline">Vercel</span>
+            </button>
+
+            <button
+              onClick={onOpenImportModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-colors"
+              title="Excel (.xlsx) veya CSV dosyasından işletmeleri içeri aktar"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span>Excel Yükle</span>
             </button>
 
             <button

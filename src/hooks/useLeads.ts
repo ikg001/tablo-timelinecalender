@@ -129,6 +129,19 @@ export function useLeads() {
     document.body.removeChild(link);
   };
 
+  const importLeads = (newLeads: Lead[], mode: 'append' | 'replace') => {
+    if (mode === 'replace') {
+      setLeads(newLeads);
+    } else {
+      setLeads(prev => {
+        const existingNames = new Set(prev.map(p => p.name.trim().toLowerCase()));
+        // Filter out items that have identical names to prevent duplicate spam
+        const uniqueNew = newLeads.filter(n => !existingNames.has(n.name.trim().toLowerCase()));
+        return [...uniqueNew, ...prev];
+      });
+    }
+  };
+
   return {
     leads,
     updateLeadStatus,
@@ -138,6 +151,7 @@ export function useLeads() {
     addLead,
     deleteLead,
     resetToInitial,
-    exportToCSV
+    exportToCSV,
+    importLeads
   };
 }
