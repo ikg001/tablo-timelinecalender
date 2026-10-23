@@ -13,12 +13,14 @@ import {
   ExternalLink,
   Sparkles,
   CalendarCheck,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Columns,
+  PhoneForwarded
 } from 'lucide-react';
 import type { LeadStatus } from '../types/lead';
 import { STATUS_OPTIONS } from '../types/lead';
 
-export type ViewMode = 'table' | 'timeline' | 'calendar' | 'analytics';
+export type ViewMode = 'table' | 'kanban' | 'timeline' | 'calendar' | 'analytics';
 
 interface HeaderProps {
   currentView: ViewMode;
@@ -39,6 +41,7 @@ interface HeaderProps {
   onOpenGoogleCalendarModal: () => void;
   onOpenWhatsAppAiModal: () => void;
   onOpenImportModal: () => void;
+  onOpenDialerModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -59,7 +62,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDeployModal,
   onOpenGoogleCalendarModal,
   onOpenWhatsAppAiModal,
-  onOpenImportModal
+  onOpenImportModal,
+  onOpenDialerModal
 }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
@@ -87,6 +91,16 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Action buttons */}
           <div className="flex items-center flex-wrap gap-2">
+            {/* Quick Dialer Mode */}
+            <button
+              onClick={onOpenDialerModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 text-xs font-semibold transition-all shadow-sm"
+              title="Sırayla Hızlı Müşteri Arama & Not Alma Modu"
+            >
+              <PhoneForwarded className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
+              <span>Hızlı Arama Modu</span>
+            </button>
+
             {/* Groq AI WhatsApp Shortcut */}
             <button
               onClick={onOpenWhatsAppAiModal}
@@ -166,7 +180,19 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Table className="w-3.5 h-3.5" />
-              <span>Tablo Görünümü</span>
+              <span>Tablo</span>
+            </button>
+
+            <button
+              onClick={() => onViewChange('kanban')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                currentView === 'kanban'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+            >
+              <Columns className="w-3.5 h-3.5" />
+              <span>Kanban Panosu</span>
             </button>
 
             <button

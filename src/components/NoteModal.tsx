@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Lead } from '../types/lead';
-import { X, StickyNote, Plus, Tag, Clock, Save, Sparkles, Trash2 } from 'lucide-react';
+import { X, StickyNote, Plus, Tag, Clock, Save, Sparkles, Trash2, Mic, MicOff } from 'lucide-react';
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -26,12 +26,49 @@ export const NoteModal: React.FC<NoteModalProps> = ({
   onSaveNotes
 }) => {
   const [noteText, setNoteText] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     if (lead) {
       setNoteText(lead.notes || '');
     }
   }, [lead, isOpen]);
+
+  const toggleVoiceRecording = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Tarayıcınız sesle yazmayı desteklemiyor. Lütfen Chrome veya Edge kullanın.');
+      return;
+    }
+
+    if (isRecording) {
+      setIsRecording(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'tr-TR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsRecording(true);
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setNoteText(prev => prev.trim() ? `${prev.trim()}\n${transcript}` : transcript);
+        }
+        setIsRecording(false);
+      };
+      recognition.onerror = () => setIsRecording(false);
+      recognition.onend = () => setIsRecording(false);
+
+      recognition.start();
+    } catch (e) {
+      console.error(e);
+      setIsRecording(false);
+    }
+  };
 
   if (!isOpen || !lead) return null;
 
@@ -90,14 +127,29 @@ export const NoteModal: React.FC<NoteModalProps> = ({
               <Tag className="w-3.5 h-3.5 text-indigo-400" />
               Hızlı Not Şablonları (Tıklayıp Ekle):
             </span>
-            <button
-              type="button"
-              onClick={addTimestamp}
-              className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 hover:underline"
-            >
-              <Clock className="w-3 h-3" />
-              Tarih & Saat Ekle
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleVoiceRecording}
+                className={`text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1 transition-all ${
+                  isRecording
+                    ? 'bg-rose-500 text-white animate-pulse'
+                    : 'text-indigo-400 hover:text-indigo-300 hover:bg-slate-800'
+                }`}
+              >
+                {isRecording ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
+                <span>{isRecording ? 'Dinleniyor...' : 'Sesle Yazdır'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={addTimestamp}
+                className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 hover:underline"
+              >
+                <Clock className="w-3 h-3" />
+                Tarih Ekle
+              </button>
+            </div>
           </div>
           <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
             {QUICK_TAGS.map((tag) => (

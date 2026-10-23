@@ -57,6 +57,21 @@ export function useLeads() {
     );
   };
 
+  const updateLeadDealValue = (id: string, dealValue: number, closedValue?: number) => {
+    setLeads(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { 
+              ...item, 
+              dealValue, 
+              closedValue: closedValue !== undefined ? closedValue : item.closedValue,
+              updatedAt: new Date().toISOString() 
+            }
+          : item
+      )
+    );
+  };
+
   const updateLead = (updated: Lead) => {
     setLeads(prev =>
       prev.map(item =>
@@ -147,6 +162,7 @@ export function useLeads() {
     updateLeadStatus,
     updateLeadNotes,
     updateLeadFollowUpDate,
+    updateLeadDealValue,
     updateLead,
     addLead,
     deleteLead,

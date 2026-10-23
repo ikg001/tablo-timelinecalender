@@ -21,6 +21,10 @@ export interface Lead {
   notes: string;               // 2. Notlar / Görüşme Detayı
   followUpDate?: string;       // 3. Takip / Randevu Tarihi (Timeline & Takvim için)
   
+  // Finansal & Satış Değerleri
+  dealValue?: number;          // Teklif Edilen Tutar (₺)
+  closedValue?: number;        // Kazanılan/Kapanan Tutar (₺)
+  
   // Opsiyonel ek alanlar
   websiteUrl?: string;
   updatedAt?: string;

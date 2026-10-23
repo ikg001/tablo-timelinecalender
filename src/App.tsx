@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import type { ViewMode } from './components/Header';
 import { StatsCards } from './components/StatsCards';
 import { TableView } from './components/TableView';
+import { KanbanView } from './components/KanbanView';
 import { TimelineView } from './components/TimelineView';
 import { CalendarView } from './components/CalendarView';
 import { AnalyticsView } from './components/AnalyticsView';
@@ -12,6 +13,8 @@ import { DeployModal } from './components/DeployModal';
 import { WhatsAppAiModal } from './components/WhatsAppAiModal';
 import { GoogleCalendarModal } from './components/GoogleCalendarModal';
 import { ImportModal } from './components/ImportModal';
+import { ProposalModal } from './components/ProposalModal';
+import { DialerModal } from './components/DialerModal';
 import type { Lead } from './types/lead';
 
 export function App() {
@@ -20,6 +23,7 @@ export function App() {
     updateLeadStatus,
     updateLeadNotes,
     updateLeadFollowUpDate,
+    updateLeadDealValue,
     updateLead,
     addLead,
     deleteLead,
@@ -46,6 +50,13 @@ export function App() {
   // Google Calendar Modal State
   const [isGoogleCalendarModalOpen, setIsGoogleCalendarModalOpen] = useState(false);
   const [activeCalendarLead, setActiveCalendarLead] = useState<Lead | null>(null);
+
+  // Proposal Modal State
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
+  const [activeProposalLead, setActiveProposalLead] = useState<Lead | null>(null);
+
+  // Quick Dialer Modal State
+  const [isDialerModalOpen, setIsDialerModalOpen] = useState(false);
 
   // Distinct categories
   const categories = useMemo(() => {
@@ -113,6 +124,11 @@ export function App() {
     setIsGoogleCalendarModalOpen(true);
   };
 
+  const handleOpenProposal = (lead?: Lead) => {
+    setActiveProposalLead(lead || filteredLeads[0] || leads[0]);
+    setIsProposalModalOpen(true);
+  };
+
   const handleAppendNotes = (id: string, newNote: string) => {
     const target = leads.find(l => l.id === id);
     if (!target) return;
@@ -142,6 +158,7 @@ export function App() {
         onOpenGoogleCalendarModal={() => handleOpenGoogleCalendar()}
         onOpenWhatsAppAiModal={() => handleOpenWhatsAppAi()}
         onOpenImportModal={() => setIsImportModalOpen(true)}
+        onOpenDialerModal={() => setIsDialerModalOpen(true)}
       />
 
       {/* Main Content */}
@@ -164,6 +181,18 @@ export function App() {
             onDeleteLead={deleteLead}
             onOpenWhatsAppAi={handleOpenWhatsAppAi}
             onOpenGoogleCalendar={handleOpenGoogleCalendar}
+            onOpenProposal={handleOpenProposal}
+          />
+        )}
+
+        {currentView === 'kanban' && (
+          <KanbanView
+            leads={filteredLeads}
+            onUpdateStatus={updateLeadStatus}
+            onOpenWhatsAppAi={handleOpenWhatsAppAi}
+            onOpenProposal={handleOpenProposal}
+            onOpenGoogleCalendar={handleOpenGoogleCalendar}
+            onEditLead={handleEditLead}
           />
         )}
 
@@ -222,6 +251,25 @@ export function App() {
         onClose={() => setIsImportModalOpen(false)}
         onImport={importLeads}
         currentCount={leads.length}
+      />
+
+      <ProposalModal
+        isOpen={isProposalModalOpen}
+        onClose={() => setIsProposalModalOpen(false)}
+        lead={activeProposalLead}
+        onSaveDealValue={(id, val) => updateLeadDealValue(id, val)}
+        onAppendNotes={handleAppendNotes}
+      />
+
+      <DialerModal
+        isOpen={isDialerModalOpen}
+        onClose={() => setIsDialerModalOpen(false)}
+        leads={filteredLeads}
+        onUpdateStatus={updateLeadStatus}
+        onUpdateNotes={updateLeadNotes}
+        onOpenWhatsAppAi={handleOpenWhatsAppAi}
+        onOpenProposal={handleOpenProposal}
+        onOpenGoogleCalendar={handleOpenGoogleCalendar}
       />
 
       {/* Footer */}

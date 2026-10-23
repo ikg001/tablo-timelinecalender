@@ -1,6 +1,6 @@
 import React from 'react';
-import { Lead } from '../types/lead';
-import { Users, PhoneCall, Globe, Sparkles, TrendingUp, AlertCircle } from 'lucide-react';
+import type { Lead } from '../types/lead';
+import { Users, PhoneCall, Globe, TrendingUp, AlertCircle, DollarSign, Wallet } from 'lucide-react';
 
 interface StatsCardsProps {
   leads: Lead[];
@@ -22,6 +22,21 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
   const avgOpportunity = Math.round(
     leads.reduce((acc, curr) => acc + (curr.opportunityScore || 0), 0) / (total || 1)
   );
+
+  // Revenue calculations
+  const wonRevenue = leads
+    .filter(l => l.status === 'websitesi_eklendi' || l.status === 'olumlu')
+    .reduce((acc, curr) => acc + (curr.closedValue || curr.dealValue || 19500), 0);
+
+  const potentialRevenue = leads.reduce((acc, curr) => {
+    return acc + (curr.dealValue || 15000);
+  }, 0);
+
+  const formatTL = (amount: number) => {
+    if (amount >= 1000000) return `${(amount / 1000000).toFixed(1)}M ₺`;
+    if (amount >= 1000) return `${Math.round(amount / 1000)}K ₺`;
+    return `${amount} ₺`;
+  };
 
   const stats = [
     {
@@ -46,25 +61,25 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
       id: 'arandi',
       title: 'Görüşme Sürecinde',
       value: inProgress,
-      desc: 'Arandı & Tekrar İletişime Geçilecek',
+      desc: 'Arandı & Tekrar Aranacak',
       icon: <PhoneCall className="w-4 h-4 text-blue-400" />,
       color: 'border-slate-800 hover:border-blue-500/50',
       activeRing: activeStatus === 'arandi' || activeStatus === 'tekrar_iletisime_gecilecek' ? 'ring-2 ring-blue-500' : ''
     },
     {
       id: 'websitesi_eklendi',
-      title: 'Web Sitesi Eklendi / Anlaşıldı',
-      value: converted,
-      desc: 'Başarıyla sonuçlanan satışlar',
-      icon: <Globe className="w-4 h-4 text-emerald-400" />,
+      title: 'Kazanılan Ciro',
+      value: converted > 0 ? formatTL(wonRevenue) : `${converted} Satış`,
+      desc: `${converted} işletme web sitesine dönüştü`,
+      icon: <Wallet className="w-4 h-4 text-emerald-400" />,
       color: 'border-slate-800 hover:border-emerald-500/50',
       activeRing: activeStatus === 'websitesi_eklendi' || activeStatus === 'olumlu' ? 'ring-2 ring-emerald-500' : ''
     },
     {
-      id: 'avg_score',
-      title: 'Ort. Fırsat Skoru',
-      value: `${avgOpportunity}/100`,
-      desc: `${rejected} red alındı`,
+      id: 'potansiyel',
+      title: 'Potansiyel Pipeline',
+      value: formatTL(potentialRevenue),
+      desc: `Ort. ${avgOpportunity}/100 fırsat skoru`,
       icon: <TrendingUp className="w-4 h-4 text-amber-400" />,
       color: 'border-slate-800 hover:border-amber-500/50',
       activeRing: ''
@@ -76,7 +91,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
       {stats.map((s) => (
         <div
           key={s.title}
-          onClick={() => s.id !== 'avg_score' && onFilterByStatus(s.id)}
+          onClick={() => s.id !== 'potansiyel' && onFilterByStatus(s.id)}
           className={`p-3.5 rounded-xl bg-slate-900/60 border ${s.color} ${s.activeRing} backdrop-blur-sm transition-all duration-200 cursor-pointer hover:bg-slate-900/90 hover:scale-[1.01]`}
         >
           <div className="flex items-center justify-between text-xs text-slate-400 mb-1">

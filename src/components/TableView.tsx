@@ -15,7 +15,8 @@ import {
   StickyNote,
   Maximize2,
   Sparkles,
-  CalendarCheck
+  CalendarCheck,
+  FileText
 } from 'lucide-react';
 import { createGoogleCalendarUrl } from '../utils/calendar';
 
@@ -28,6 +29,7 @@ interface TableViewProps {
   onDeleteLead: (id: string) => void;
   onOpenWhatsAppAi: (lead: Lead) => void;
   onOpenGoogleCalendar: (lead: Lead) => void;
+  onOpenProposal: (lead: Lead) => void;
 }
 
 type SortField = 'name' | 'opportunityScore' | 'addedDate' | 'status' | 'category';
@@ -40,7 +42,8 @@ export const TableView: React.FC<TableViewProps> = ({
   onEditLead,
   onDeleteLead,
   onOpenWhatsAppAi,
-  onOpenGoogleCalendar
+  onOpenGoogleCalendar,
+  onOpenProposal
 }) => {
   const [sortField, setSortField] = useState<SortField>('opportunityScore');
   const [sortAsc, setSortAsc] = useState<boolean>(false);
@@ -332,6 +335,13 @@ export const TableView: React.FC<TableViewProps> = ({
                       {/* Actions */}
                       <td className="py-3 px-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => onOpenProposal(lead)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+                            title="Teklif Mektubu / Fiyat Hazırla"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                          </button>
                           <button
                             onClick={() => onEditLead(lead)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-300 hover:bg-slate-800 transition-colors"
