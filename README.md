@@ -1,32 +1,61 @@
-# React + TypeScript + Vite
+# Malatya İşletme CRM & Web Satış Yönetim Paneli
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Malatya'daki **diş klinikleri**, **diyetisyenler** ve **sigorta acenteleri** (toplam 64 işletme) için geliştirilmiş modern, etkileşimli CRM, zaman çizelgesi (timeline) ve takvim yönetim platformu.
 
-Currently, two official plugins are available:
+## 🚀 Öne Çıkan Özellikler
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 1. 📋 Zengin Tablo Sistemi (Table View)
+- **Orijinal Veriler**: İşletme Adı, Kategori, Şehir (Malatya), Telefon, Orijinal Durum, Fırsat Skoru, Eklenme Tarihi.
+- **Ekstra 3 Sütun (İstenen Özellikler)**:
+  1. **İletişim / Süreç Durumu (Dropdown)**:
+     - ⚪ `Aranmadı`
+     - 🔵 `Arandı`
+     - 🟡 `Tekrar İletişime Geçilecek`
+     - 🟢 `Websitesi Eklendi` (Konfeti kutlamalı)
+     - 🔴 `Red Alındı`
+     - 🟣 `Olumlu / Anlaşıldı`
+  2. **Görüşme Notları**: Tablo üzerinden anında düzenlenebilir, müşteriyle yapılan görüşme detaylarını saklar.
+  3. **Takip / Randevu Tarihi**: Tarih seçici ile sonraki arama veya toplantı tarihini belirler.
+- **Hızlı İletişim Aksiyonları**:
+  - Tek tıkla telefon araması (`tel:`)
+  - Tek tıkla WhatsApp mesajı başlatma (`wa.me`)
+  - İşletme düzenleme & silme
 
-## React Compiler
+### 2. ⏳ Zaman Çizelgesi (Timeline View)
+- Planlanmış takipler, arama bekleyen işletmeler ve tamamlanan web siteleri kronolojik bloklar halinde sunulur.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. 📅 Etkileşimli Takvim (Calendar View)
+- Randevu veya takip tarihi atanmış firmaları takvim üzerinde gün bazında gösterir.
 
-## Expanding the Oxlint configuration
+### 4. 📊 Detaylı Analitik & İstatistik (Analytics View)
+- Sektör dağılımı (Diş Klinikleri, Diyetisyenler, Sigortalar), durum yüzdeleri, dönüşüm oranları ve en yüksek fırsat skoruna sahip firmalar.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### 5. 💾 Veri Güvenliği & Dışa Aktarma
+- `localStorage` desteği ile tüm durum ve not değişiklikleri tarayıcıda kalıcı olarak saklanır.
+- **CSV / Excel İndir**: Tek tıkla tüm listeyi dışa aktarabilirsiniz.
+- **İlk Duruma Sıfırla**: İstenildiğinde 64 orijinal işletme kaydına anında dönebilme.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+---
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 🛠️ Kullanılan Teknolojiler
+- **React 19 & TypeScript**: Tip güvenli, performanslı arayüz bileşenleri.
+- **Vite 6**: Süper hızlı geliştirme ve build performansı.
+- **Tailwind CSS v4**: Modern, koyu temalı (dark mode) şık cam (glassmorphism) tasarım.
+- **Lucide React**: Zengin, modern ikon seti.
+- **Canvas-Confetti**: Başarılı satış ve web sitesi ekleme durumlarında görsel kutlama.
+
+---
+
+## 🌐 Dağıtım (GitHub & Vercel)
+
+### GitHub Deposu
+- `https://github.com/ikg001/tablo-timelinecalender`
+
+### Vercel ile Canlıya Alma
+1. [Vercel Dashboard](https://vercel.com/dashboard) adresine gidin.
+2. **"Add New"** > **"Project"** seçin.
+3. GitHub hesabınızı bağlayıp `tablo-timelinecalender` deposunu seçin.
+4. **"Deploy"** butonuna basın. Projeniz 1 dakika içinde canlı URL ile yayında olacaktır!
+
+Alternatif tek tıkla kurulum:
+[Vercel One-Click Deploy](https://vercel.com/new/clone?repository-url=https://github.com/ikg001/tablo-timelinecalender)

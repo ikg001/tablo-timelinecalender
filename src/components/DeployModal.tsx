@@ -11,10 +11,12 @@ interface DeployModalProps {
 export const DeployModal: React.FC<DeployModalProps> = ({
   isOpen,
   onClose,
-  repoUrl,
+  repoUrl = 'https://github.com/ikg001/tablo-timelinecalender',
   vercelUrl
 }) => {
   if (!isOpen) return null;
+
+  const oneClickDeployUrl = `https://vercel.com/new/clone?repository-url=${encodeURIComponent(repoUrl)}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
@@ -26,7 +28,7 @@ export const DeployModal: React.FC<DeployModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-white">
-                GitHub & Vercel Canlı Dağıtım
+                GitHub & Vercel Canlı Dağıtım Paneli
               </h3>
               <p className="text-xs text-slate-400">
                 Uygulamanın GitHub ve Vercel entegrasyonu
@@ -42,61 +44,66 @@ export const DeployModal: React.FC<DeployModalProps> = ({
         </div>
 
         <div className="mt-4 space-y-4">
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+          <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-800/40 space-y-1.5">
             <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
               <CheckCircle2 className="w-4 h-4" />
-              <span>Proje Mimarisi Hazırlandı</span>
+              <span>GitHub Reposu Başarıyla Oluşturuldu ve İtildi</span>
             </div>
             <p className="text-xs text-slate-300">
-              React + TypeScript + Vite + Tailwind CSS mimarisi ile 64 işletme verisi, 3 ekstra CRM sütunu, Zaman Çizelgesi ve Takvim modülü eksiksiz entegre edildi.
+              Kodlarınız ve 64 işletme veriniz GitHub üzerinde güvenle saklanmaktadır.
             </p>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-              Entegrasyon Adımları:
-            </h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                <GitBranch className="w-4 h-4 text-indigo-400 mt-0.5" />
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5 text-xs">
+                <GitBranch className="w-4 h-4 text-indigo-400" />
                 <div>
-                  <div className="font-semibold text-white">1. GitHub Deposu (Repository)</div>
-                  <div className="text-slate-400 mt-0.5">
-                    {repoUrl ? (
-                      <a href={repoUrl} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline flex items-center gap-1">
-                        {repoUrl} <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      'Terminal üzerinden gh repo create tablo-timelinecalender ile senkronize ediliyor.'
-                    )}
+                  <div className="font-semibold text-white">GitHub Reposu</div>
+                  <div className="text-slate-400 font-mono text-[11px] truncate max-w-[240px]">
+                    {repoUrl}
                   </div>
                 </div>
               </div>
+              <a
+                href={repoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1 transition-colors"
+              >
+                <span>Repoya Git</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
 
-              <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                <Globe className="w-4 h-4 text-emerald-400 mt-0.5" />
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5 text-xs">
+                <Globe className="w-4 h-4 text-emerald-400" />
                 <div>
-                  <div className="font-semibold text-white">2. Vercel Canlı Dağıtım</div>
-                  <div className="text-slate-400 mt-0.5">
-                    {vercelUrl ? (
-                      <a href={vercelUrl} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline flex items-center gap-1 font-semibold">
-                        Canlı Siteye Git: {vercelUrl} <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      'Vercel CLI veya vercel.com üzerinden GitHub reposu bağlanarak anında canlıya alınır.'
-                    )}
+                  <div className="font-semibold text-white">Vercel Tek Tıkla Canlıya Al</div>
+                  <div className="text-slate-400 text-[11px]">
+                    Vercel hesabınızla anında bağlayıp ücretsiz yayınlayın
                   </div>
                 </div>
               </div>
+              <a
+                href={oneClickDeployUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition-all shadow-md shadow-emerald-600/30 hover:scale-[1.02]"
+              >
+                <span>Vercel Deploy</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
 
           <div className="pt-3 border-t border-slate-800 flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
+              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
             >
-              Tamam
+              Kapat
             </button>
           </div>
         </div>
